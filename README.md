@@ -1,2 +1,2 @@
-# GDProxy-Python
-GDProxy (Proxy for Geometry Dash) but its way better.
+# Setup
+Download GDProxy.exe (x64) from releases or setup GDProxy.py using Python, You already know how to do it.
