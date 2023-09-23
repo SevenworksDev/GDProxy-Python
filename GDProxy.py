@@ -13,7 +13,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write(b"GDProxy (Python Rewrite) by Sevenworks - Try sending a POST Request to this server the same you would send it to http://www.boomlings.com/database/something.php or use a GDPS Switcher tool like GDHM")
+            self.wfile.write(b"GDProxy (Python Rewrite) by Sevenworks (https://github.com/SevenworksDev/GDProxy-Python) - Try sending a POST Request to this server the same you would send it to http://www.boomlings.com/database/something.php or use a GDPS Switcher tool like GDHM")
         else:
             self.send_error(404, "Not Found", "Either you tried to send a GET Request to RobTops servers or RobTops servers returned HTTP 404.")
 
