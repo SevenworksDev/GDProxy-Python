@@ -1,0 +1,14 @@
+{
+  "gdServer": {
+    "url": "http://www.boomlings.com/database"
+  },
+  "commentBan": {
+    "enabled": false,
+    "banTime": 1000,
+    "banReason": "your noob u suck nananananana"
+  },
+  "noLogin": {
+    "enabled": false,
+    "noLoginCode": "-1"
+  }
+}
