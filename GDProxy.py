@@ -1,8 +1,16 @@
-import http.server, socketserver, time
+import time, json, socketserver, http.server
 from urllib import request, parse
 from http import client
 
-BOOMLINGS_URL = "http://www.boomlings.com"
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+gdServer_url = config.get('gdServer', {}).get('url', "http://www.boomlings.com")
+commentBan_enabled = config.get('commentBan', {}).get('enabled', False)
+commentBan_banTime = config.get('commentBan', {}).get('banTime', 3600)
+commentBan_banReason = config.get('commentBan', {}).get('banReason', "")
+noLogin_enabled = config.get('noLogin', {}).get('enabled', False)
+noLogin_noLoginCode = config.get('noLogin', {}).get('noLoginCode', -1)
 
 ip_request_count = {}
 ip_last_request_time = {}
@@ -32,10 +40,25 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
 
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
-        headers = { 'User-Agent': '' }
+        headers = {'User-Agent': ''}
         try:
+            if commentBan_enabled and '/uploadGJComment21.php' in self.path:
+                temp_response = f"temp_{commentBan_banTime}_{commentBan_banReason}" if commentBan_banTime and commentBan_banReason else -10
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(str(temp_response).encode('utf-8'))
+                return
+
+            if noLogin_enabled and '/accounts/loginGJAccount.php' in self.path:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(str(noLogin_noLoginCode).encode('utf-8'))
+                return
+
             req = request.Request(
-                BOOMLINGS_URL + self.path,
+                gdServer_url + self.path,
                 data=post_data,
                 headers=headers,
                 method='POST'
@@ -48,6 +71,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/plain')
                 self.end_headers()
                 self.wfile.write(response_data.encode('utf-8'))
+
         except client.HTTPException as e:
             self.send_error(500, "Server Error", "GDProxy error has occurred, check the console if you are the developer.")
             print(f"str(e)")
